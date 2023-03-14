@@ -18,7 +18,7 @@ git clone https://github.com/KuroshioDev/kuroshio-xiaoyao-plugin.git ./xiaoyao-p
 
 #### Instructions
 
-参考逍遥插件的使用指南
+参考[逍遥插件](https://gitee.com/Ctrlcvs/xiaoyao-cvs-plugin)的使用指南
 
 #### Contribution
 
