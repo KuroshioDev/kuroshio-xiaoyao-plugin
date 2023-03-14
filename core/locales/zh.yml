@@ -1,0 +1,86 @@
+commands:
+  genshin.admin.updateatlas:
+    description: 更新图鉴图片
+    usage: |
+      指令用法
+      #图鉴更新
+  genshin.admin.updatetemplate:
+    description: 更新体力模板
+    usage: |
+      指令用法
+      #图鉴模板更新
+  genshin.admin.setting:
+    description: 图鉴设置
+    usage: |
+      指令用法
+      #图鉴设置目录(开启|关闭)
+      #图鉴设置体力(开启|关闭)
+      #图鉴设置匹配(开启|关闭)
+      #图鉴设置模板(开启|关闭)
+      #图鉴设置获取sk(开启|关闭)
+  genshin.help.alishelp:
+    description: 图鉴帮助
+    usage: |
+      指令用法
+      #图鉴帮助
+  genshin.admin.alisversion:
+    description: 图鉴版本
+    usage: |
+      指令用法
+      #图鉴版本
+  genshin.wiki.atlas:
+    description: 查询图鉴
+    usage: |
+      指令用法
+      #怪物图鉴
+      #食物图鉴
+      #角色图鉴
+      #boss图鉴
+  genshin.user.login:
+    description: 原神扫码登录
+    usage: |
+      指令用法
+      #扫码登录
+  genshin.profile.notes:
+    description: 多体力查询
+    usage: |
+      指令用法
+      #多体力
+  genshin.mys.sign:
+    description: 米游社签到
+    usage: |
+      指令用法
+      #原神签到 #崩坏三签到
+      #米游社全部签到
+  genshin.mys.help:
+    description: 米游社签到帮助
+    usage: |
+      #米游社帮助
+  genshin.mys.status:
+    description: 米游社签到查询
+    usage: |
+      指令用法
+      #米游币查询
+  genshin.user.stoken:
+    description: 原神cookie功能
+    usage: |
+      指令用法
+      #刷新ck
+      #我的stoken
+      #我的ck
+      #删除我的stoken
+  genshin.user.signinfo:
+    description: 原神签到查询
+    usage: |
+      指令用法
+      #签到查询
+  genshin.profile.upategachalog:
+    description: 更新抽卡记录
+    usage: |
+      指令用法
+      #upatepaylog抽卡记录
+  genshin.profile.upatepaylog:
+    description: 更新氪金记录
+    usage: |
+      指令用法
+      #获取氪金记录

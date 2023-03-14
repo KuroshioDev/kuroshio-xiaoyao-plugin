@@ -1,0 +1,16 @@
+{
+	"sys": {
+		"help": false,
+		"Note": true,
+		"Atlas": true
+	},
+	"Atlas": {
+		"all": true
+	},
+	"ck": {
+		"sk": true
+	},
+	"mb": {
+		"len": 2
+	}
+}
