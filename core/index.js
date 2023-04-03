@@ -8,13 +8,12 @@ const initDB = require( "./database/db.js")
 const SignApp = require( "./entrace/sign.js")
 const NoteApp = require( "./entrace/note.js")
 const LoginApp = require( "./entrace/login.js")
-const { common } = require("../../lib/common/common.js")
+const common = require("../../lib/common/common.js")
 const fs = require( "fs")
 const MapApp = require( "./entrace/map")
 const YAML = require('yaml')
 
 const logger = new Logger("Kuroshio-Genshin-Plugin")
-
 
 class XiaoyaoPlugin {
 
