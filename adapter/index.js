@@ -1,4 +1,4 @@
-const { plugin } = require("../../lib/plugins/plugin.js")
+const plugin = require("../../lib/plugins/plugin.js")
 const Atlas =  require('../apps/index.js')
 const { render } = require('./render.js')
 const { getMysApi } = require('./mys.js')

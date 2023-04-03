@@ -1,7 +1,7 @@
 const lodash = require( 'lodash')
 const { Data } = require( '../components/Data.js')
 const puppeteer = require( '../../lib/puppeteer/puppeteer.js')
-const { common } = require( "../../lib/common/common")
+const common = require( "../../lib/common/common")
 
 const plugin = 'xiaoyao-plugin'
 
