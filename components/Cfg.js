@@ -1,6 +1,6 @@
 const fs = require( "fs")
 const lodash = require( 'lodash')
-const { common } = require( '../../lib/common/common')
+const common = require( '../../lib/common/common')
 
 const _path = common.getPluginsPath();
 const _cfgPath = `${_path}/xiaoyao-plugin/components/`;

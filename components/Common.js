@@ -1,7 +1,7 @@
 const { Cfg  } = require( "./index.js")
 const { segment } = require( "oicq")
 const { currentVersion, yunzaiVersion,isV3 } = require( "./Changelog.js")
-const { common } = require( '../../lib/common/common')
+const common = require( '../../lib/common/common')
 
 const render = async function (path, params, cfg) {
   let paths = path.split("/");
