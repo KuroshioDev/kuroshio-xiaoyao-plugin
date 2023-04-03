@@ -2,7 +2,7 @@ const { Cfg } = require( "../components/index.js")
 const lodash = require( 'lodash')
 const {currentVersion, changelogs} = require( "../components/Changelog.js")
 const Common = require( "../components/Common.js")
-const { common } = require( "../../lib/common/common")
+const common = require( "../../lib/common/common")
 const fs = require( "fs")
 
 const _path =common.getPluginsPath();

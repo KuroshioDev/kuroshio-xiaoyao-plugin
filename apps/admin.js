@@ -2,7 +2,7 @@ const lodash = require( "lodash")
 const fs = require( "fs")
 const { Cfg } = require( "../components/index.js")
 const Common = require( "../components/Common.js")
-const { common } = require( '../../lib/common/common')
+const common = require( '../../lib/common/common')
 const { exec } = require( "child_process")
 const { Logger } = require('koishi')
 const logger = new Logger('admin')
@@ -161,7 +161,7 @@ async function updateRes(e) {
 		});
 	} else {
 		//gitee图床
-		command = `git clone https://github.com/ctrlcvs/xiaoyao_plus.git "${resPath}/xiaoyao-plus/"`
+		command = `git clone https://gitee.com/lucasDev/xiaoyao-plus.git "${resPath}/xiaoyao-plus/"`
 		// command = `git clone https://github.com/ctrlcvs/xiaoyao_plus.git "${resPath}/xiaoyao-plus/"`;\n此链接为github图床,如异常请请求多次
 		e.reply("开始尝试安装图鉴加量包，可能会需要一段时间，请耐心等待~");
 		exec(command, function(error, stdout, stderr) {

@@ -2,7 +2,7 @@ const { segment } = require( "oicq")
 const fs = require( "fs")
 const { Cfg } = require( "../components/index.js")
 const gsCfg = require( '../model/gsCfg.js')
-const { common } = require( '../../lib/common/common')
+const common = require( '../../lib/common/common')
 
 const _path = common.getPluginsPath();
 const plugin = "xiaoyao-plugin"

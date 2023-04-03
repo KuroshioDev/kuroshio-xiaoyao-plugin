@@ -2,9 +2,10 @@ const {Data} = require( "../components/Data.js")
 const fs = require( "fs")
 const fetch = require( "node-fetch")
 const {segment } = require( "oicq")
-const { common } = require( '../../lib/common/common')
+const common = require( '../../lib/common/common')
 
 let path = `${common.getDataPath()}/map`
+
 
 //mapId-地图别名
 let getPath={

@@ -7,7 +7,7 @@ const gsCfg = require( '../model/gsCfg.js')
 const fs = require( "fs")
 const YAML  = require( 'yaml')
 const User = require( "../model/user.js")
-const { common } = require( '../../lib/common/common')
+const common = require( '../../lib/common/common')
 const { Logger } = require( 'koishi')
 const logger = new Logger("xiaoyao-apps-user")
 const rule = {
@@ -253,13 +253,21 @@ async function bindStoken(e) {
 	await user.cookie(e)
 	e.region = getServer(e.uid)
 	e.cks = msg.replace(/;/g, '&').replace(/stuid/, "uid")
+	e.sk = await utils.getCookieMap(msg)
 	let res = await user.getData("bbsGetCookie", { cookies: e.cks })
 	if (!res?.data) {
-		await e.reply(`绑定Stoken失败，异常：${res?.message}\n请发送【stoken帮助】查看配置教程重新配置~`);
-		return true;
+		e.uid="64"
+		e.region = getServer(e.uid)
+		res = await user.getData("bbsGetCookie", { cookies: e.cks,method:'post'},false)
+		if(!res?.data){
+			await e.reply(`绑定Stoken失败，异常：${res?.message}\n请发送【stoken帮助】查看配置教程重新配置~`);
+			return true;
+		}else{
+			await user.seachUid(res);
+			return true;
+		}
 	}
 	await user.getCookie(e)
-	e.sk = await utils.getCookieMap(msg)
 	await user.seachUid(res);
 	return true;
 }
@@ -326,9 +334,15 @@ async function updCookie(e) {
 	for (let item of Object.keys(stoken)) {
 		e.region = getServer(stoken[item].uid)
 		e.uid = stoken[item].uid
+		if(!e?.uid){
+			Bot.logger.mark(`[刷新ck][stoken读取]qq:${e?.user_id}；uid:${e?.uid}`)
+			continue; //奇怪的东西
+		} 
 		let cookies = `uid=${stoken[item].stuid}&stoken=${stoken[item].stoken}`
 		if (stoken[item]?.mid) cookies += `&mid=${stoken[item]?.mid}`
-		let res = await user.getData("bbsGetCookie", { cookies: cookies }, false)
+		let data = { cookies: cookies }
+		if(e?.uid[0]>5) data.method='post'
+		let res = await user.getData("bbsGetCookie",data, false)
 		if (!res?.data) {
 			e.reply(`uid:${stoken[item].uid},请求异常：${res.message}`)
 			continue;
@@ -336,7 +350,7 @@ async function updCookie(e) {
 		let ck = res["data"]["cookie_token"];
 		e.msg = `ltoken=${stoken[item].ltoken};ltuid=${stoken[item].stuid};cookie_token=${ck}; account_id=${stoken[item].stuid};`
 		if (isGet) {
-			sendMsg = [...sendMsg, ...[`uid:${stoken[item].uid}`, e.msg]]
+			sendMsg = [...sendMsg, `uid:${stoken[item].uid}`, e.msg]
 		} else {
 			if (isV3) {
 				let userck = (require(`${common.getPluginsPath()}/genshin/model/user.js`))

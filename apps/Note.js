@@ -5,7 +5,8 @@ const {Cfg} = require( "../components/Cfg.js")
 const utils = require( "../model/mys/utils.js")
 const note = require( '../model/note.js')
 const User = require( "../model/user.js")
-const { common } = require( "../../lib/common/common")
+const common = require( "../../lib/common/common")
+
 const _path = process.cwd();
 const { Logger } = require('koishi')
 const logger = new Logger('Note')
