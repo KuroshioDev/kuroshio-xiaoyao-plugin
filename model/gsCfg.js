@@ -2,7 +2,7 @@ const YAML  = require( 'yaml')
 const fs  = require( 'node:fs')
 const lodash = require( 'lodash')
 const {isV3}  = require( '../components/Changelog.js')
-const { common } = require( '../../lib/common/common')
+const common = require( '../../lib/common/common')
 
 const { Logger } = require( "koishi")
 const plugin = "xiaoyao-plugin"

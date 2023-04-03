@@ -7,7 +7,7 @@ const {isV3} = require( '../components/Changelog.js')
 const {Cfg, Data} = require( "../components/index.js")
 const moment = require( 'moment')
 const MysInfo = require( "../../genshin/model/mys/mysInfo")
-const { common } = require( '../../lib/common/common')
+const common = require( '../../lib/common/common')
 const _path = common.getPluginsPath();
 const plugin = "xiaoyao-plugin"
 const nameData = ["原神", "崩坏3", "崩坏2", "未定事件簿"];
@@ -124,15 +124,11 @@ class user {
 						}
 						message += `${item.nickname}-${item.game_uid}：今日已签到~\n`;
 					} else {
-						let isgt = false
 						let signMsg = '';
 						for (let i = 0; i < 2; i++) { //循环请求
 							await utils.sleepAsync(2000)
 							res = await this.getData("sign", data, false)
 							if (res?.data?.gt) {
-								if (!isgt) {
-									isgt = true;
-								}
 								let validate = await this.geetest(res.data)
 								if (validate) {
 									let header = {}
@@ -142,13 +138,14 @@ class user {
 									data.headers = header
 									res = await this.getData("sign", data, false)
 									if (!res?.data?.gt) {
-										if (this.allSign && !isgt) {
+										if (this.allSign) {
 											this.allSign[forum.name].sign++;
 										}
 										signMsg = `${item.nickname}-${item.game_uid}:验证码签到成功~\n`
+										item.total_sign_day++;
 										break;
 									} else {
-										if (this.allSign && !isgt) {
+										if (this.allSign) {
 											this.allSign[forum.name].error++;
 										}
 										item.is_sign = false;
@@ -156,7 +153,7 @@ class user {
 											`${item.nickname}-${item.game_uid}:签到出现验证码~\n请晚点后重试，或者手动上米游社签到\n`;
 									}
 								} else {
-									if (this.allSign && !isgt) {
+									if (this.allSign ) {
 										this.allSign[forum.name].error++;
 									}
 									signMsg = `${item.nickname}-${item.game_uid}:验证码失败~\n`
@@ -202,6 +199,7 @@ class user {
 	async cloudSign() {
 		await this.cloudSeach()
 		let res = await this.getData("cloudReward")
+		Bot.logger.mark(`\n云原神签到用户:${this.e.user_id}:[接口返回]${res.message}\n`)
 		if (res?.data?.list?.length == 0 || !res?.data?.list) {
 			res.message = `您今天的奖励已经领取了~`
 		} else {
@@ -212,6 +210,7 @@ class user {
 				res = await this.getData("cloudGamer", {
 					reward_id
 				})
+				// let row=JSON.parse(reward_msg);
 				sendMsg += `\n领取奖励,ID:${reward_id},Msg:${reward_msg}`
 			}
 			res.message = sendMsg;
@@ -340,8 +339,8 @@ class user {
 				if (res?.message && res?.retcode == 0) {
 					Share++;
 				}
-				message += `共读取帖子记录${20 * sumcount}\n浏览成功：${trueDetail}\n点赞成功：${Vote}\n分享成功：${Share}`;
-				logger.info(`\n用户${this.e.user_id}:\n${message}`)
+				message += `共读取帖子记录${20 * sumcount}\n浏览：${trueDetail}  点赞：${Vote}  分享：${Share}\n`;
+        logger.info(`\n用户${this.e.user_id}:\n${message}`)
 				await utils.randomSleepAsync(3);
 			}
 		} catch (ex) {
@@ -467,6 +466,7 @@ class user {
 		let mul = e;
 		logger.info(`云原神签到任务开始`);
 		let files = fs.readdirSync(this.yunPath).filter(file => file.endsWith('.yaml'))
+		if(files.length==0) return;
 		let isCloudSignMsg = this.configSign.isCloudSignMsg
 		let userIdList = (files.join(",").replace(/.yaml/g, "").split(","))
 		if (cloudTask) {
@@ -507,8 +507,8 @@ class user {
 					utils.relpyPrivate(qq, msg + "\n云原神自动签到成功");
 				}
 			};
-			this.getyunToken(e)
 			this.e = e
+			await this.getyunToken(e)
 			let res = await this.cloudSign();
 			this.e.reply(res.message)
 			await utils.sleepAsync(10000);
@@ -608,11 +608,12 @@ class user {
 		bbsTask = false;
 	}
 	async bbsGeetest() {
+		if(!this.getToken) return ""
 		try {
 			let res = await this.getData('bbsGetCaptcha', false)
 			// let challenge = res.data["challenge"]
 			// await this.getData("geeType", res.data, false)
-			res.data.getToken=this.getToken
+			res.data.getToken = this.getToken
 			res = await this.getData("validate", res.data, false)
 			if (res?.data?.validate) {
 				res = await this.getData("bbsCaptchaVerify", res.data, false)
@@ -626,8 +627,9 @@ class user {
 		return ""
 	}
 	async geetest(data) {
+		if(!this.getToken) return ""
 		try {
-			data.getToken=this.getToken
+			data.getToken = this.getToken
 			let res = await this.getData("validate", data, false)
 			if (res?.data?.validate) {
 				let validate = res?.data?.validate
@@ -771,6 +773,7 @@ class user {
 			if (res?.retcode != 0) {
 				return false;
 			}
+			// console.log(res,this.e.sk)
 			let uids = []
 			for (let s of res.data.list) {
 				let datalist = {}
@@ -801,6 +804,7 @@ class user {
 			this.e.reply(msg)
 		}
 	}
+
 	async delSytk(path = yamlDataUrl, e, type = "stoken") {
     let ck = await this.getCookie(this.e);
 

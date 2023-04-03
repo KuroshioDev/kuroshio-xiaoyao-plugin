@@ -63,7 +63,7 @@ async function replyMake(e, _msg, lenght) {
 		if (index < lenght) {
 			continue;
 		}
-		msgList.push(item)
+		msgList = item
 	}
 	if (e._reply) {
 		e._reply(msgList);

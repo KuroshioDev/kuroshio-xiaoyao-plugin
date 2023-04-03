@@ -6,7 +6,7 @@ const moment = require( 'moment')
 const Common = require( "../components/Common.js")
 const gsCfg = require( './gsCfg.js')
 const {isV3} = require( '../components/Changelog.js')
-const { common } = require( '../../lib/common/common')
+const common = require( '../../lib/common/common')
 const { Logger } = require('koishi')
 const logger = new Logger('note')
 
