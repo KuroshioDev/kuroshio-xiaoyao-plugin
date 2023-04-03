@@ -1,10 +1,9 @@
-import fs from 'node:fs'
-export * from './apps/index.js'
-import * as Atlas from './apps/index.js'
-import common from "../../lib/common/common";
+const { fs } = require('node:fs')
+// export * from './apps/index.js'
+const common = require("../../lib/common/common")
 const files = fs.readdirSync(`${common.getPluginsPath()}/xiaoyao-plugin/apps`).filter(file => file.endsWith('index.js'))
 
-export async function init() {
+async function init() {
   console.log("-------------------------")
   //console.log(Atlas)
   let ret = []
@@ -22,3 +21,5 @@ export async function init() {
   }
   return apps
 }
+
+exports.init = init
