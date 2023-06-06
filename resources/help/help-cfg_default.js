@@ -4,11 +4,11 @@
 * */
 
 // 帮助配置
-export const helpCfg = {
+const helpCfg = {
   title: "图鉴帮助",  // 帮助标题
   subTitle: "Koishi yu& xiaoyao-cvs-Plugin" // 帮助副标题
 };
-export const helpList = [{
+const helpList = [{
 	"group": "信息查询",
 	"list": [{
 			"icon": 61,
@@ -90,3 +90,5 @@ export const helpList = [{
 		}
 	]
 }]
+exports.helpCfg = helpCfg
+exports.helpList = helpList
