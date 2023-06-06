@@ -31,7 +31,7 @@ async function redisGet(userId, type = 'bbs') {
 	return JSON.parse(await redis.get(`xiaoyao:${type}:${userId}`))
 }
 async function redisSet(userId="all", type = 'bbs', data, time=0) {
-	var dayTime = moment(Date.now()).add('days', 1).format('YYYY-MM-DD 00:00:00')
+	var dayTime = moment(Date.now()).add(1, 'days').format('YYYY-MM-DD 00:00:00')
 	var new_date = (new Date(dayTime).getTime() - new Date().getTime()) / 1000 //获取隔天凌晨的时间差
 	if (time!==0) {
 		new_date = time
@@ -56,6 +56,7 @@ async function relpyPrivate(userId, msg) {
 		})
 	}
 }
+
 async function replyMake(e, _msg, lenght) {
 	let nickname = e.sender.nickname;
 	let msgList = [];
@@ -108,10 +109,10 @@ async function getCookieMap(cookie) {
  */
 function recallMsg(e,r,times){
 	setTimeout(()=>{
-		if(e.group){
-			e.group.recallMsg(r.message_id)
-		}else{
-			e.friend.recallMsg(r.message_id)
+		if(e?.group?.recallMsg&&r?.message_id){
+			e?.group?.recallMsg(r?.message_id)
+		}else if(e?.friend?.recallMsg&&r?.message_id){
+			e?.friend?.recallMsg(r?.message_id)
 		}
 	},1000 * times)
 }

@@ -29,7 +29,7 @@ class mysTopLogin {
         this.e.reply(this.sendMsgUser)
         let res = await this.user.getData("qrCodeLogin", {
             device: this.device
-        })
+        },false)
         if (!res.data) {
             return false;
         }
@@ -44,7 +44,7 @@ class mysTopLogin {
             await utils.sleepAsync(5000)
             res = await this.user.getData("qrCodeQuery", {
                 device: this.device, ticket
-            })
+            },false)
             if (res?.data?.stat == "Scanned" && RedisData.GetQrCode == 1) {
               logger.info(`[米哈游登录] ${JSON.stringify(res)}`)
                 await this.e.reply("二维码已扫描，请确认登录", true)
@@ -61,8 +61,8 @@ class mysTopLogin {
             return false
         }
         let raw = JSON.parse(res?.data?.payload?.raw)
-        let UserData = await this.user.getData("getTokenByGameToken", raw)
-        let ck = await this.user.getData("getCookieAccountInfoByGameToken", raw)
+        let UserData = await this.user.getData("getTokenByGameToken", raw,false)
+        let ck = await this.user.getData("getCookieAccountInfoByGameToken", raw,false)
         return {
             cookie: `ltoken=${UserData.data?.token?.token};ltuid=${UserData.data?.user_info?.aid};cookie_token=${ck.data?.cookie_token}`,
             stoken: `stoken=${UserData.data?.token?.token};stuid=${UserData.data?.user_info?.aid};mid=${UserData?.data?.user_info.mid}`
@@ -165,7 +165,7 @@ class mysTopLogin {
                 this.e.reply(this.sendMsgPay)
                 return true;
             }
-            let iswx = msg[0].includes('微信') ? 'weixin' : 'alipay'
+            let iswx = msg[0].includes('微信') ? 'wechatpay' : 'alipay'
             if (msg[1].length != 1) {
                 this.e.reply(this.sendMsgPay)
                 return true;
@@ -181,7 +181,7 @@ class mysTopLogin {
                 return true
             }
             let ckData = await utils.getCookieMap(this.e.cookie)
-            let device_id = utils.randomString(4)
+            let device_id = utils.randomString(16)
             let region = utils.getServer(this.e.uid)
             let order = {
                 "account": ckData?.get('ltuid') || ckData?.get('account_id'),

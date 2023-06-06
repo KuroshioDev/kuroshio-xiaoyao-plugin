@@ -126,6 +126,7 @@ class miHoYoApi {
 		return res
 	}
 	getUrl(type, board, data) {
+		// if(/qrCodeLogin|qrCodeQuery|getTokenByGameToken|getCookieAccountInfoByGameToken/.test(type)) this.isOs=false;
 		let urlMap = {
 			userGameInfo: { //通用查询
 				url: `${this.apiMap.apiWeb}/binding/api/getUserGameRolesByCookie`,
@@ -210,7 +211,7 @@ class miHoYoApi {
 			},
 			//很抱歉由于有人恶意倒卖，不得已只能是关闭免费token了 开放免费供人使用还被恶意倒卖指责 开源确实不好弄捏
 			validate: {
-				url: `http://api.fuckmys.tk/geetest`,
+				url: `https://challenge.minigg.cn`,
 				query: `token=${data?.getToken}&gt=${data.gt}&challenge=${data.challenge}`
 			},
 			cloudLogin: {
@@ -296,7 +297,7 @@ class miHoYoApi {
 			createOrder:{
 				url:`${mys.hk4_sdk}/hk4e_cn/mdk/atropos/api/createOrder`,
 				body: {
-					// "special_info": "topup_center",
+					"special_info": "topup_center",
 					"order": data.order,
 					"sign":  this.gen_sign(data.order)
 				},
@@ -463,7 +464,7 @@ class miHoYoApi {
 					'x-rpc-device_id': DEVICE_ID,
 					'x-rpc-app_id': "bll8iq97cem8",
 					'x-rpc-device_name': DEVICE_NAME,
-					"x-rpc-device_fp": utils.randomString(13),
+					"x-rpc-device_fp": "38d7ee0e96649",
 					"x-rpc-device_model": utils.randomString(16),
 					'x-rpc-app_version': mys.APP_VERSION,
 					'x-rpc-game_biz': 'bbs_cn',
@@ -524,7 +525,7 @@ class miHoYoApi {
 	async getStoken(userId) {
     let ck = await global.dbHelper.get('genshin_user_cookie', {
       user_id: [userId],
-      isMain: true
+      $and: [{isMain: true}]
     })
     let dbData
     if (ck) {
