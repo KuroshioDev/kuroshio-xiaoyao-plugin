@@ -23,7 +23,7 @@ async function Note(e, {render}, poke) {
 	if (isV3) {
 		if (e.msg.replace(/全|全部/g, '多').includes('多')) {
 			let ck = await gsCfg.getBingCkSingle(e.user_id)
-			if (Object.keys(ck).length == 0) {
+			if (Object.keys(ck).filter(v=>v!='null').length == 0) {
 				e.reply(`请先【#绑定cookie】`)
 				return true;
 			}
@@ -241,11 +241,11 @@ async function Note_appoint(e) {
 			let imgurl;
 			let pathFile = urlType[item].replace(/\./, _path)
 			if (item.includes(".")) {
-				imgurl = await segment.image(`file:///${pathFile}`);
+				imgurl = await segment.image(`file://${pathFile}`);
 				item = item.split(".")[0];
 			} else {
 				imgurl = await segment.image(
-					`file:///${pathFile}/icon/bg/${fs.readdirSync(`${pathFile}/icon/bg/`)[0]}`
+					`file://${pathFile}/icon/bg/${fs.readdirSync(`${pathFile}/icon/bg/`)[0]}`
 				)
 			}
 			if (isUser && !temp?.includes(item)) {

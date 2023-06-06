@@ -4,6 +4,8 @@ const Common = require( "../components/Common.js")
 const { bindStoken } = require( './user.js')
 const common = require(  "../../lib/common/common")
 const { segment } = require( 'oicq')
+const utils = require('../model/mys/utils')
+const {Cfg} = require('../components/index')
 
 const _path = process.cwd();
 const rule = {
@@ -31,7 +33,7 @@ const rule = {
 async function payOrder(e, { render }) {
 	let Mys = new mys(e)
 	if (/(商品|充值)列表/.test(e.msg)) {
-		return await Mys.showgoods( { render })
+		return await Mys.showgoods({ render })
 	} else if (/(订单|查询)(订单|查询)/.test(e.msg)) {
 		return await Mys.checkOrder()
 	} else if (e.msg.includes('充值')) {
@@ -41,6 +43,17 @@ async function payOrder(e, { render }) {
 }
 
 async function qrCodeLogin(e, { render }) {
+	let power = Cfg.get("mhy.qrcode")
+	if (power === 3) {
+		return false;
+	} else {
+		if (power == 2 && !e.isPrivate) {
+			return false;
+		}
+		if (power == 1 && !e.isGroup) {
+			return false;
+		}
+	}
 	let Mys = new mys(e)
 	let res = await Mys.qrCodeLogin()
 	if (!res?.data) return false;
@@ -89,17 +102,10 @@ async function UserPassLogin(e) {
 async function bindSkCK(e, res) {
 	e.msg = res?.stoken, e.raw_message = res?.stoken
 	e.isPrivate = true
-	await bindStoken(e)
+	await bindStoken(e, '1')
 	e.ck = res?.cookie, e.msg = res.cookie, e.raw_message = res.cookie;
-	if (isV3) {
-		let userck = (require(`${common.getPluginsPath()}/genshin/model/user.js`))
-		await (new userck(e)).bing()
-	} else {
-		let {
-			bingCookie
-		} = (await import(`${_path}/lib/app/dailyNote.js`))
-		await bingCookie(e)
-	}
+  let userck = (require(`${common.getPluginsPath()}/genshin/model/user.js`))
+  await (new userck(e)).bing()
 }
 exports.rule = rule
 exports.payOrder = payOrder

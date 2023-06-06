@@ -15,6 +15,7 @@ let cfgMap = {
 	"模板": "mb.len",
 	"获取sk":"ck.sk",
 	"目录":"Atlas.all",
+	"扫码绑定":'mhy.qrcode',
 };
 let sysCfgReg = `^#图鉴设置\s*(${lodash.keys(cfgMap).join("|")})?\s*(.*)$`;
 const rule = {
@@ -69,6 +70,8 @@ async function sysCfg(e, {render}) {
 			val = Math.min(200, Math.max(50, val * 1 || 100));
 		}else if(cfgKey === "mb.len"){
 			val= Math.min(2,Math.max(val,0));
+		}else if(cfgKey==='mhy.qrcode'){
+			val= Math.min(3,Math.max(val,0));
 		} else {
 			val = !/关闭/.test(val);
 		}
@@ -83,6 +86,7 @@ async function sysCfg(e, {render}) {
 		len:Cfg.get("mb.len", 0),
 		poke: getStatus("note.poke",false),
 		isSk: getStatus("ck.sk",false),
+		qrcode:Cfg.get("mhy.qrcode", 0),
 		imgPlus: fs.existsSync(plusPath),
 		notePlus: fs.existsSync(notePlus),
 		bg: await rodom(), //获取底图

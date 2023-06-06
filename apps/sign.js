@@ -1,10 +1,13 @@
 const User = require( "../model/user.js")
 const moment = require( 'moment')
+const lodash = require('lodash')
 const { Logger } = require( "koishi")
-
+const {Data} = require('../components/index')
+const common = require('../../lib/common/common');
+let ForumData = Data.readJSON(`${common.getPluginsPath()}/xiaoyao-plugin/defSet/json`, "mys")
 const rule = {
 	sign: {
-		reg: `^#*(原神|崩坏3|崩坏2|未定事件簿)签到$`,
+		reg: `^#*(${lodash.map(ForumData,v=> v.otherName.join('|')).join('|')}|游戏)签到$`,
 		describe: "米社规则签到"
 	},
 	bbsSign: {

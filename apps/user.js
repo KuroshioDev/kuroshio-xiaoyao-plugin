@@ -166,7 +166,7 @@ async function gclog(e) {
 		} else {
 			let {
 				bing
-			} = (await import(`file:///${_path}/lib/app/gachaLog.js`))
+			} = (await import(`file://${_path}/lib/app/gachaLog.js`))
 			e.isPrivate = true;
 			await bing(e)
 		}
@@ -185,7 +185,7 @@ async function getAuthKey(e, user) {
 	e.region = getServer(e.uid)
 	let authkeyrow = await user.getData("authKey", {});
 	if (!authkeyrow?.data) {
-		e.reply(`uid:${e.uid},authkey获取失败：` + (authkeyrow.message.includes("登录失效") ? "请重新绑定stoken" : authkeyrow.message))
+		e.reply(`uid:${e.uid},authkey获取失败：` + (authkeyrow.message.includes("登录失效") ? "请重新绑定stoken, 请发送#扫码登录" : authkeyrow.message))
 		return false;
 	}
 	return authkeyrow.data["authkey"];
@@ -243,7 +243,7 @@ async function bindLogin_ticket(e) {
 	return false;
 }
 
-async function bindStoken(e) {
+async function bindStoken(e, uid = '') {
 	if (!e.isPrivate) {
 		e.reply("请私聊发送")
 		return true;
@@ -251,23 +251,24 @@ async function bindStoken(e) {
 	let msg = e.msg;
 	let user = new User(e);
 	await user.cookie(e)
+	e.uid = uid || e.uid
 	e.region = getServer(e.uid)
 	e.cks = msg.replace(/;/g, '&').replace(/stuid/, "uid")
 	e.sk = await utils.getCookieMap(msg)
-	let res = await user.getData("bbsGetCookie", { cookies: e.cks })
+	let res = await user.getData("bbsGetCookie", { cookies: e.cks }, false)
 	if (!res?.data) {
-		e.uid="64"
+		e.uid = "64"
 		e.region = getServer(e.uid)
-		res = await user.getData("bbsGetCookie", { cookies: e.cks,method:'post'},false)
-		if(!res?.data){
-			await e.reply(`绑定Stoken失败，异常：${res?.message}\n请发送【stoken帮助】查看配置教程重新配置~`);
+		res = await user.getData("bbsGetCookie", { cookies: e.cks, method: 'post' }, false)
+		if (!res?.data) {
+      await e.reply(`绑定Stoken失败，异常：${res?.message}\n请发送#扫码登录~`);
 			return true;
-		}else{
+		} else {
 			await user.seachUid(res);
 			return true;
 		}
 	}
-	await user.getCookie(e)
+	// await user.getCookie(e)
 	await user.seachUid(res);
 	return true;
 }
@@ -279,7 +280,7 @@ async function cloudToken(e) {
 		e.reply(`格式支持\nai=*;ci=*;oi=*;ct=***********;si=**************;bi=***********;devId=***********`)
 		return false;
 	}
-	let msg = e.msg.replace(/dev(i|l|I|L)d/g,'devId').split("devId")
+	let msg = e.msg.replace(/dev(i|l|I|L)d/g, 'devId').split("devId")
 	if (msg.length < 2) {
 		logger.error(`云原神绑定失败：未包含devId字段~`)
 		return false;
@@ -317,7 +318,7 @@ async function delSign(e) {
 async function updCookie(e) {
 	let stoken = await gsCfg.getUserStoken(e.user_id);
 	if (Object.keys(stoken).length == 0) {
-		e.reply("请先绑定stoken\n发送【stoken帮助】查看配置教程")
+		e.reply("请先绑定stoken\n请发送#扫码登录")
 		return true;
 	}
 	let isGet = e.msg.includes("获取")
@@ -335,14 +336,14 @@ async function updCookie(e) {
 		e.region = getServer(stoken[item].uid)
 		e.uid = stoken[item].uid
 		if(!e?.uid){
-			Bot.logger.mark(`[刷新ck][stoken读取]qq:${e?.user_id}；uid:${e?.uid}`)
+			logger.info(`[刷新ck][stoken读取]qq:${e?.user_id}；uid:${e?.uid}`)
 			continue; //奇怪的东西
-		} 
+		}
 		let cookies = `uid=${stoken[item].stuid}&stoken=${stoken[item].stoken}`
 		if (stoken[item]?.mid) cookies += `&mid=${stoken[item]?.mid}`
 		let data = { cookies: cookies }
-		if(e?.uid[0]>5) data.method='post'
-		let res = await user.getData("bbsGetCookie",data, false)
+		if (e?.uid[0] > 5) data.method = 'post'
+		let res = await user.getData("bbsGetCookie", data, false)
 		if (!res?.data) {
 			e.reply(`uid:${stoken[item].uid},请求异常：${res.message}`)
 			continue;
@@ -350,23 +351,16 @@ async function updCookie(e) {
 		let ck = res["data"]["cookie_token"];
 		e.msg = `ltoken=${stoken[item].ltoken};ltuid=${stoken[item].stuid};cookie_token=${ck}; account_id=${stoken[item].stuid};`
 		if (isGet) {
-			sendMsg = [...sendMsg, `uid:${stoken[item].uid}`, e.msg]
+			sendMsg = [`uid:${stoken[item].uid}`, e.msg]
 		} else {
-			if (isV3) {
-				let userck = (require(`${common.getPluginsPath()}/genshin/model/user.js`))
-				e.ck = e.msg;
-        e.login_ticket = stoken[item].login_ticket
-				await (new userck(e)).bing()
-			} else {
-				let {
-					bingCookie
-				} = (await import(`file:///${_path}/lib/app/dailyNote.js`))
-				e.isPrivate = true;
-				await bingCookie(e)
-			}
+      let userck = (require(`${common.getPluginsPath()}/genshin/model/user.js`))
+      e.ck = e.msg;
+      e.login_ticket = stoken[item].login_ticket
+      await (new userck(e)).bing()
 		}
 	}
-	await utils.replyMake(e, sendMsg, 0)
+  sendMsg = sendMsg.filter(m => m.includes("绑定cookie成功"))
+	await e._reply(sendMsg)
 	return true;
 }
 
