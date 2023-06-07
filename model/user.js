@@ -81,14 +81,18 @@ const logger = new Logger("xiaoyao-model-user")
           user_id: [this.e.user_id],
           $and: [{uid: this.e.uid}]
         })
-        if(!sk) {
-          return {uid: this.e.uid, message: "查找stoken失败"}
-        }else {
-          this.miHoYoApi.cookies = `stuid=${sk.stuid};stoken=${sk.stoken};mid=${sk.mid};`
-        }
         let res = await this.miHoYoApi.getData(type, data)
         return res
     }
+
+  async getData4Scan(type, data = {}, isck = true,sc = false) {
+    if (isck) {
+      await this.cookie(this.e)
+    }
+    this.miHoYoApi = new miHoYoApi(this.e);
+    let res = await this.miHoYoApi.getData(type, data)
+    return res
+  }
 
     async multiSign(forumData, isCk = false) {
         let upData = [],

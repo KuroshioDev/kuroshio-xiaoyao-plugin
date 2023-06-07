@@ -27,9 +27,9 @@ class mysTopLogin {
         }
         this.device = await utils.randomString(64)
         this.e.reply(this.sendMsgUser)
-        let res = await this.user.getData("qrCodeLogin", {
+        let res = await this.user.getData4Scan("qrCodeLogin", {
             device: this.device
-        },false)
+        },false,true)
         if (!res.data) {
             return false;
         }
