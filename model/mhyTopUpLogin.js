@@ -42,7 +42,7 @@ class mysTopLogin {
         let RedisData = await utils.redisGet(this.e.user_id, "GetQrCode")
         for (let n = 1; n < 60; n++) {
             await utils.sleepAsync(5000)
-            res = await this.user.getData("qrCodeQuery", {
+            res = await this.user.getData4Scan("qrCodeQuery", {
                 device: this.device, ticket
             },false)
             if (res?.data?.stat == "Scanned" && RedisData.GetQrCode == 1) {
@@ -61,8 +61,8 @@ class mysTopLogin {
             return false
         }
         let raw = JSON.parse(res?.data?.payload?.raw)
-        let UserData = await this.user.getData("getTokenByGameToken", raw,false)
-        let ck = await this.user.getData("getCookieAccountInfoByGameToken", raw,false)
+        let UserData = await this.user.getData4Scan("getTokenByGameToken", raw,false)
+        let ck = await this.user.getData4Scan("getCookieAccountInfoByGameToken", raw,false)
         return {
             cookie: `ltoken=${UserData.data?.token?.token};ltuid=${UserData.data?.user_info?.aid};cookie_token=${ck.data?.cookie_token}`,
             stoken: `stoken=${UserData.data?.token?.token};stuid=${UserData.data?.user_info?.aid};mid=${UserData?.data?.user_info.mid}`

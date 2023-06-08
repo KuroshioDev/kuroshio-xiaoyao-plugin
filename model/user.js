@@ -81,6 +81,11 @@ const logger = new Logger("xiaoyao-model-user")
           user_id: [this.e.user_id],
           $and: [{uid: this.e.uid}]
         })
+        if(!sk) {
+          return {uid: this.e.uid, message: "查找stoken失败"}
+        }else {
+          this.miHoYoApi.cookies = `stuid=${sk.stuid};stoken=${sk.stoken};mid=${sk.mid};`
+        }
         let res = await this.miHoYoApi.getData(type, data)
         return res
     }
@@ -199,7 +204,7 @@ const logger = new Logger("xiaoyao-model-user")
                 if (this.allSign) {
                     this.allSign[forum.name].error++;
                 }
-                Bot.logger.error(`${forum.name} 签到失败 [${res?.message}]`);
+                logger.error(`${forum.name} 签到失败 [${res?.message}]`);
                 message += `签到失败: [${res?.message}]\n`;
             }
         }
@@ -216,7 +221,7 @@ const logger = new Logger("xiaoyao-model-user")
     async cloudSign() {
         await this.cloudSeach()
         let res = await this.getData("cloudReward")
-        Bot.logger.mark(`\n云原神签到用户:${this.e.user_id}:[接口返回]${res.message}\n`)
+        logger.info(`\n云原神签到用户:${this.e.user_id}:[接口返回]${res.message}\n`)
         if (res?.data?.list?.length == 0 || !res?.data?.list) {
             res.message = `您今天的奖励已经领取了~`
         } else {
@@ -232,7 +237,7 @@ const logger = new Logger("xiaoyao-model-user")
             }
             res.message = sendMsg;
         }
-        Bot.logger.mark(`\n云原神签到用户:${this.e.user_id}:${res.message}\n`)
+        logger.info(`\n云原神签到用户:${this.e.user_id}:${res.message}\n`)
         return res
     }
 
@@ -307,7 +312,7 @@ const logger = new Logger("xiaoyao-model-user")
                 } else {
                     message += `社区签到: ${res.message}\n`;
                 }
-                Bot.logger.mark(`${this.e.user_id}:${this.e.uid}:${forum.name} 社区签到结果: [${res.message}]`);
+                logger.info(`${this.e.user_id}:${this.e.uid}:${forum.name} 社区签到结果: [${res.message}]`);
                 res = await this.getData("bbsPostList", forum, false)
                 sumcount++;
                 let postList = res.data.list;
@@ -360,11 +365,11 @@ const logger = new Logger("xiaoyao-model-user")
                     Share++;
                 }
                 message += `共读取帖子记录${20 * sumcount}\n浏览：${trueDetail}  点赞：${Vote}  分享：${Share}\n`;
-                Bot.logger.mark(`\n用户${this.e.user_id}:\n${message}`)
+                logger.info(`\n用户${this.e.user_id}:\n${message}`)
                 await utils.randomSleepAsync(3);
             }
         } catch (ex) {
-            Bot.logger.error(`出问题了：${ex}`);
+            logger.error(`出问题了：${ex}`);
             message += `${this.e.user_id}获取米游币异常`;
         }
         return {
@@ -375,7 +380,7 @@ const logger = new Logger("xiaoyao-model-user")
     async signTask(e = "") {
         let mul = e;
         //暂不支持多个uid签到
-        Bot.logger.mark(`开始米社签到任务`);
+        logger.info(`开始米社签到任务`);
         let isAllSign = this.configSign.isAllSign
         let userIdList = [];
         let dir = './data/MysCookie/'
@@ -420,7 +425,7 @@ const logger = new Logger("xiaoyao-model-user")
         if (time > 120) {
             tips.push(`\n完成时间：${finishTime}`)
         }
-        Bot.logger.mark(`签到用户:${userIdkeys.length}个，预计需要${this.countTime(time)} ${finishTime} 完成`)
+        logger.info(`签到用户:${userIdkeys.length}个，预计需要${this.countTime(time)} ${finishTime} 完成`)
         if (mul) {
             await this.e.reply(tips)
             if (this.e.msg.includes('force')) this.force = true
@@ -487,11 +492,11 @@ const logger = new Logger("xiaoyao-model-user")
             } else {
                 e.msg = "全部"
             }
-            Bot.logger.mark(`正在为qq:${user_id},通行证id:${ltuid}米社签到中...`);
+            logger.info(`正在为qq:${user_id},通行证id:${ltuid}米社签到中...`);
 
             this.e = e;
             let res = await this.multiSign(this.getDataList(e.msg));
-            Bot.logger.mark(`${res.message}`)
+            logger.info(`${res.message}`)
             e.reply = (msg) => {
                 if (!isAllSign || mul) {
                     return;
@@ -505,7 +510,7 @@ const logger = new Logger("xiaoyao-model-user")
             await utils.sleepAsync(15000);
         }
         msg = `米社签到任务完成\n` + this.allSign.sendReply()
-        Bot.logger.mark(msg);
+        logger.info(msg);
         if (mul) {
             _reply(msg)
         } else {
@@ -516,7 +521,7 @@ const logger = new Logger("xiaoyao-model-user")
 
     async cloudTask(e = "") {
         let mul = e;
-        Bot.logger.mark(`云原神签到任务开始`);
+        logger.info(`云原神签到任务开始`);
         let files = fs.readdirSync(this.yunPath).filter(file => file.endsWith('.yaml'))
         if (files.length == 0) return;
         let isCloudSignMsg = this.configSign.isCloudSignMsg
@@ -533,7 +538,7 @@ const logger = new Logger("xiaoyao-model-user")
         if (time > 120) {
             tips.push(`\n完成时间：${finishTime}`)
         }
-        Bot.logger.mark(`签到用户:${userIdList.length}个，预计需要${this.countTime(time)} ${finishTime} 完成`)
+        logger.info(`签到用户:${userIdList.length}个，预计需要${this.countTime(time)} ${finishTime} 完成`)
         if (mul) {
             await this.e.reply(tips)
         } else {
@@ -549,7 +554,7 @@ const logger = new Logger("xiaoyao-model-user")
                 qq,
                 isTask: true
             };
-            Bot.logger.mark(`正在为qq${user_id}云原神签到中...`);
+            logger.info(`正在为qq${user_id}云原神签到中...`);
             e.msg = "全部"
             e.reply = (msg) => {
                 if (!isCloudSignMsg || mul) {
@@ -566,7 +571,7 @@ const logger = new Logger("xiaoyao-model-user")
             await utils.sleepAsync(10000);
         }
         let msg = `云原神签到任务完成`
-        Bot.logger.mark(msg);
+        logger.info(msg);
         if (mul) {
             _reply(msg)
         } else {
@@ -588,7 +593,7 @@ const logger = new Logger("xiaoyao-model-user")
 
     async bbsTask(e = "") {
         let mul = e;
-        Bot.logger.mark(`开始米社米币签到任务`);
+        logger.info(`开始米社米币签到任务`);
         let stoken = await gsCfg.getBingStoken();
         let isPushSign = this.configSign.isPushSign
         let userIdList = Object.keys(stoken)
@@ -604,7 +609,7 @@ const logger = new Logger("xiaoyao-model-user")
         if (time > 120) {
             tips.push(`\n完成时间：${finishTime}`)
         }
-        Bot.logger.mark(`签到用户:${userIdList.length}个，预计需要${this.countTime(time)} ${finishTime} 完成`)
+        logger.info(`签到用户:${userIdList.length}个，预计需要${this.countTime(time)} ${finishTime} 完成`)
         if (mul) {
             await this.e.reply(tips)
             if (this.e.msg.includes('force')) this.force = true
@@ -630,7 +635,7 @@ const logger = new Logger("xiaoyao-model-user")
                     };
                     counts++;
                     e.cookie = `stuid=${data.stuid};stoken=${data.stoken};ltoken=${data.ltoken};`;
-                    Bot.logger.mark(`[米游币签到][第${counts}个]正在为qq${user_id}：uid:${uuId}签到中...`);
+                    logger.info(`[米游币签到][第${counts}个]正在为qq${user_id}：uid:${uuId}签到中...`);
                     e.msg = "全部"
                     e.reply = (msg) => {
                         //关闭签到消息推送

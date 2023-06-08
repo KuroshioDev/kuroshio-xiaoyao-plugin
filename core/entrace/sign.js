@@ -5,7 +5,7 @@ class SignApp {
       .action(async ({session}) => {
         new app(ctx, session).dispatch()
       })
-      ctx.guild().command('genshin.xiaoyao.signall', { authority: 4 }).userFields(['id'])
+      ctx.guild().command('genshin.xiaoyao.signall').userFields(['id'])
       .shortcut(/#*(米游社|mys|社区)(原神|崩坏3|崩坏2|未定事件簿|大别野|崩坏星穹铁道|绝区零|全部)签到$/)
       .action(async ({session}) => {
         new app(ctx, session).dispatch()
