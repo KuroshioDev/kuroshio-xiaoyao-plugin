@@ -255,7 +255,7 @@ async function bindStoken(e, uid = '') {
 	e.region = getServer(e.uid)
 	e.cks = msg.replace(/;/g, '&').replace(/stuid/, "uid")
 	e.sk = await utils.getCookieMap(msg)
-	let res = await user.getData4Scan("bbsGetCookie", { cookies: e.cks }, false)
+	let res = await user.getData("bbsGetCookie", { cookies: e.cks }, false)
 	if (!res?.data) {
 		e.uid = "64"
 		e.region = getServer(e.uid)

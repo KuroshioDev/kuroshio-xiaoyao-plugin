@@ -81,9 +81,7 @@ const logger = new Logger("xiaoyao-model-user")
           user_id: [this.e.user_id],
           $and: [{uid: this.e.uid}]
         })
-        if(!sk) {
-          return {uid: this.e.uid, message: "查找stoken失败"}
-        }else {
+        if(sk) {
           this.miHoYoApi.cookies = `stuid=${sk.stuid};stoken=${sk.stoken};mid=${sk.mid};`
         }
         let res = await this.miHoYoApi.getData(type, data)
