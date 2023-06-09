@@ -42,9 +42,9 @@ const rule = {
 };
 
 
-const _path = common.getSourcePath();
+const _path = common.getPluginsPath();
 const plugin = "xiaoyao-plugin"
-const resPath = `${_path}/plugins/${plugin}/resources/`;
+const resPath = `${_path}/${plugin}/resources/`;
 const plusPath = `${resPath}/xiaoyao-plus/`;
 const notePlus=`${resPath}/BJT-Templet/`;
 async function sysCfg(e, {render}) {
